@@ -1,0 +1,40 @@
+---
+# External Ansible dependencies
+# Install with:
+#   ansible-galaxy install -r requirements.yml -p .roles
+
+roles:
+  - src: git@github.com:RobertYoung/homelab-ansible-role-configure-system.git
+    scm: git
+    version: v1.1.0
+    name: configure-system
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-shell.git
+    scm: git
+    version: v1.3.0
+    name: shell
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-docker.git
+    scm: git
+    version: v1.0.0
+    name: docker
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-telegraf.git
+    scm: git
+    version: v1.1.1
+    name: telegraf
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-step-ca-client.git
+    scm: git
+    version: v1.3.0
+    name: step-ca-client
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-syslog.git
+    scm: git
+    version: v1.1.1
+    name: syslog
+
+  - src: git@github.com:RobertYoung/homelab-ansible-role-wazuh-agent.git
+    scm: git
+    version: v1.3.2
+    name: wazuh-agent

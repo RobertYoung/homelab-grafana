@@ -1,0 +1,32 @@
+# Ansible
+*.retry
+*.log
+.ansible/
+
+# Vault password files
+.vault_pass
+vault_pass.txt
+
+# Downloaded roles
+roles/external/
+.roles/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Virtual environments
+venv/
+.venv/
+
+# Node.js (for semantic-release in CI)
+node_modules/
+package.json
+package-lock.json
