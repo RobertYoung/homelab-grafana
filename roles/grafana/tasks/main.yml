@@ -1,0 +1,27 @@
+---
+- name: Setup system
+  ansible.builtin.include_tasks:
+    file: setup.yml
+    apply:
+      tags:
+        - setup
+  tags:
+    - always
+
+- name: Setup grafana
+  ansible.builtin.include_tasks:
+    file: grafana.yml
+    apply:
+      tags:
+        - grafana
+  tags:
+    - always
+
+- name: Setup backup
+  ansible.builtin.include_tasks:
+    file: backup.yml
+    apply:
+      tags:
+        - backup
+  tags:
+    - always

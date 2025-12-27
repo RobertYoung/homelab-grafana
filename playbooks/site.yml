@@ -1,0 +1,70 @@
+---
+- name: Grafana server configuration
+  hosts: grafana
+  vars:
+    hostname: grafana
+    domain: local.iamrobertyoung.co.uk
+    fqdn: "{{ hostname }}.{{ domain }}"
+
+  roles:
+    - role: configure-system
+      tags: [configure-system]
+
+    - role: shell
+      tags: [shell]
+      vars:
+        shell_hostname: "{{ hostname }}"
+        shell_user: noxious
+        shell_home_directory: /home/noxious
+
+    - role: shell
+      tags: [shell]
+      vars:
+        shell_hostname: "{{ hostname }}"
+        shell_user: root
+        shell_home_directory: /root
+        shell_show_pretty_info: false
+
+    - role: docker
+      tags: [docker]
+
+    - role: telegraf
+      tags: [telegraf]
+      vars:
+        telegraf_influxdb_url: "https://influxdb.{{ domain }}"
+        telegraf_influxdb_port: 8086
+        telegraf_influxdb_organisation: "0dd8df669872ba9e"
+        telegraf_influxdb_token: "{{ lookup('aws_ssm', '/home-server/influxdb-token', region='eu-west-2') }}"
+        telegraf_influxdb_bucket: "home-server"
+
+    - role: step-ca-client
+      tags: [step-ca-client]
+      vars:
+        step_ca_client_provisioner_password: "{{ lookup('aws_ssm', '/home-server/step-ca-ansible-password', region='eu-west-2') }}"
+        step_ca_client_post_renew_commands:
+          - "cp /etc/ssl/certs/grafana.local.iamrobertyoung.co.uk.crt /etc/grafana/certs/"
+          - "cp /etc/ssl/private/grafana.local.iamrobertyoung.co.uk.pem /etc/grafana/certs/"
+          - "docker kill -s HUP nginx"
+        step_ca_client_cert_not_after: "168h" # 7 days
+
+    - role: syslog
+      tags: [syslog]
+      vars:
+        syslog_fqdn: "{{ fqdn }}"
+
+    - role: wazuh-agent
+      tags: [wazuh-agent]
+
+    - role: grafana
+      tags: [grafana]
+      vars:
+        grafana_admin_password: "{{ lookup('aws_ssm', '/home-server/grafana-admin-password', region='eu-west-2') }}"
+        grafana_validator_admin_password: "{{ lookup('aws_ssm', '/home-server/grafana-validator-admin-password', region='eu-west-2') }}"
+        grafana_relay_haas_token: "{{ lookup('aws_ssm', '/home-server/grafana-relay-haas-token', region='eu-west-2') }}"
+        grafana_backup_aws_access_key: "{{ lookup('aws_ssm', '/home-server/access-key', region='eu-west-2') }}"
+        grafana_backup_aws_secret_access_key: "{{ lookup('aws_ssm', '/home-server/secret-access-key', region='eu-west-2') }}"
+        grafana_backup_aws_region: eu-west-2
+        grafana_backup_mosquitto_password: "{{ lookup('aws_ssm', '/home-server/mosquitto-home-assistant-password', region='eu-west-2') }}"
+        grafana_mysql_root_password: "{{ lookup('aws_ssm', '/home-server/mysql-password', region='eu-west-2') }}"
+        grafana_mysql_password: "{{ lookup('aws_ssm', '/home-server/mysql-grafana-password', region='eu-west-2') }}"
+        grafana_mysql_nginx_password: "{{ lookup('aws_ssm', '/home-server/mysql-nginx-password', region='eu-west-2') }}"

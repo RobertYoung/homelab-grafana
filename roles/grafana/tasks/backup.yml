@@ -1,0 +1,75 @@
+---
+- name: Copy dockerfile
+  ansible.builtin.copy:
+    src: files/dockerfile
+    dest: /tmp/Dockerfile
+    mode: "0644"
+  register: grafana_dockerfile_copy
+
+- name: Create backup script
+  become: true
+  ansible.builtin.copy:
+    src: "files/backup.sh"
+    dest: "/tmp/backup.sh"
+    mode: "0644"
+  register: grafana_backup_script_copy
+
+- name: Build Docker image
+  become: true
+  community.docker.docker_image:
+    name: "{{ grafana_backup_image_name }}"
+    tag: "{{ grafana_backup_image_tag }}"
+    source: build
+    push: false
+    build:
+      path: /tmp
+    force_source: "{{ grafana_dockerfile_copy.changed or grafana_backup_script_copy.changed }}"
+    state: present
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create backup .env file
+  become: true
+  ansible.builtin.template:
+    src: templates/docker-compose/backup-toolkit.env.j2
+    dest: "{{ grafana_config_dir }}/backup-toolkit.env"
+    group: "{{ grafana_user }}"
+    owner: "{{ grafana_user }}"
+    mode: "0400"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create grafana backup systemd service file
+  become: true
+  ansible.builtin.template:
+    src: "templates/backup/backup.service.j2"
+    dest: /etc/systemd/system/{{ grafana_service_name }}-backup.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: grafana_service_backup
+
+- name: Create grafana backup systemd timer file
+  become: true
+  ansible.builtin.template:
+    src: "templates/backup/backup.timer.j2"
+    dest: /etc/systemd/system/{{ grafana_service_name }}-backup.timer
+    owner: root
+    group: root
+    mode: "0644"
+  vars:
+    service: "{{ grafana_service_name }}"
+    cron: "*-*-* 03:50:00"
+  register: grafana_timer_backup
+
+- name: Reload systemd
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: grafana_service_backup.changed or grafana_timer_backup.changed
+
+- name: Enable and start backup timer
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ grafana_service_name }}-backup.timer"
+    enabled: true
+    state: started
+  when: grafana_service_backup.changed or grafana_timer_backup.changed

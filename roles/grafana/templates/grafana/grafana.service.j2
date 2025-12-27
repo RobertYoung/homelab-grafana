@@ -1,0 +1,17 @@
+[Unit]
+Description=Manages docker compose service for {{ grafana_service_name }}
+Requires=docker.service
+After=docker.service
+
+[Service]
+WorkingDirectory={{ grafana_config_dir }}
+ExecStart=/usr/bin/docker compose up
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=0
+Restart=on-failure
+StartLimitIntervalSec=60
+StartLimitBurst=3
+EnvironmentFile=/etc/environment
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,51 @@
+---
+# Service configuration
+grafana_service_name: grafana
+grafana_service_version: "9.1.7"
+grafana_service_port: "443"
+grafana_data_dir: /var/lib/grafana
+grafana_config_dir: /etc/grafana
+grafana_user: grafana
+grafana_domain: grafana.local.iamrobertyoung.co.uk
+grafana_container_name: grafana
+
+# Grafana admin credentials
+grafana_admin_password: password
+grafana_validator_admin_password: password
+
+# Backup configuration
+grafana_backup_image_name: backup-toolkit
+grafana_backup_image_tag: local
+grafana_backup_from: /data
+grafana_backup_mosquitto_host: mosquitto.local.iamrobertyoung.co.uk
+grafana_backup_mosquitto_username: "home-assistant"
+grafana_backup_mosquitto_password: "password"
+grafana_backup_bucket_name: "home-server-backup.iamrobertyoung.co.uk"
+grafana_backup_aws_access_key: ""
+grafana_backup_aws_secret_access_key: ""
+grafana_backup_aws_region: eu-west-2
+
+# Grafana relay configuration
+grafana_relay_port: 9091
+grafana_relay_haas_token: EXAMPLE
+
+# MySQL configuration
+grafana_mysql_root_password: password
+grafana_mysql_database: grafana
+grafana_mysql_data_dir: /var/lib/mysql
+grafana_mysql_service_name: mysql
+grafana_mysql_backup_latest: "{{ grafana_mysql_service_name }}-latest.zip"
+grafana_mysql_backup_script_file: "{{ grafana_config_dir }}/backup-mysql.sh"
+grafana_mysql_user: grafana
+grafana_mysql_password: password
+grafana_mysql_grafana_database: grafana
+grafana_mysql_nginx_user: nginx
+grafana_mysql_nginx_password: password
+grafana_mysql_nginx_database: nginx
+grafana_mysql_port: 3306
+
+# Nginx configuration
+grafana_nginx_config_dir: /etc/nginx
+grafana_nginx_data_dir: /var/lib/nginx
+grafana_nginx_user: nginx
+grafana_nginx_service_name: nginx

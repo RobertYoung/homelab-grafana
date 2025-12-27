@@ -1,0 +1,8 @@
+[Unit]
+Description=Run {{ service }} backup periodically
+
+[Timer]
+OnCalendar={{ cron }}
+
+[Install]
+WantedBy=timers.target
