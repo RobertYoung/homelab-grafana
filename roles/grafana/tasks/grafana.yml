@@ -1,0 +1,60 @@
+---
+- name: Create docker compose config
+  become: true
+  ansible.builtin.template:
+    src: "templates/docker-compose/docker-compose.yml.j2"
+    dest: "{{ grafana_config_dir }}/docker-compose.yml"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+    mode: "0644"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create systemd service file
+  become: true
+  ansible.builtin.template:
+    src: "templates/{{ grafana_service_name }}/{{ grafana_service_name }}.service.j2"
+    dest: /etc/systemd/system/{{ grafana_service_name }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create mysql .env file
+  become: true
+  ansible.builtin.template:
+    src: templates/docker-compose/mysql.env.j2
+    dest: "{{ grafana_config_dir }}/mysql.env"
+    group: "{{ grafana_user }}"
+    owner: "{{ grafana_user }}"
+    mode: "0400"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create grafana .env file
+  become: true
+  ansible.builtin.template:
+    src: templates/docker-compose/grafana.env.j2
+    dest: "{{ grafana_config_dir }}/grafana.env"
+    group: "{{ grafana_user }}"
+    owner: "{{ grafana_user }}"
+    mode: "0400"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Copy grafana.ini file
+  become: true
+  ansible.builtin.copy:
+    src: files/grafana.ini
+    dest: "{{ grafana_config_dir }}/grafana.ini"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+    mode: "0644"
+  notify: "Restart {{ grafana_service_name }}"
+
+- name: Create grafana relay .env file
+  become: true
+  ansible.builtin.template:
+    src: templates/docker-compose/grafana-relay.env.j2
+    dest: "{{ grafana_config_dir }}/grafana-relay.env"
+    group: "{{ grafana_user }}"
+    owner: "{{ grafana_user }}"
+    mode: "0400"
+  notify: "Restart {{ grafana_service_name }}"

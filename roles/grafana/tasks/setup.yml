@@ -1,0 +1,38 @@
+---
+- name: Create grafana user
+  become: true
+  ansible.builtin.user:
+    name: "{{ grafana_user }}"
+    create_home: false
+    comment: "{{ grafana_user }} user with no shell access"
+    shell: /bin/false
+  register: grafana_user_result
+
+- name: Create config directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ grafana_config_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+
+- name: Create data directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ grafana_data_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+
+- name: Add users to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ item }}"
+    groups: docker
+    append: true
+  with_items:
+    - root
+    - noxious
+    - "{{ grafana_user }}"

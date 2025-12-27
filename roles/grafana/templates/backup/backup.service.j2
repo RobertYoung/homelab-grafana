@@ -1,0 +1,9 @@
+[Unit]
+Description=Run {{ grafana_service_name }} backup
+OnFailure=mail-systemd-failure@%n.service
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ grafana_config_dir }}
+ExecStartPre=/usr/bin/docker compose up -d backup-toolkit
+ExecStart=/usr/bin/docker exec backup-toolkit /bin/bash -c "./backup.sh"

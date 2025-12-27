@@ -1,0 +1,53 @@
+services:
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:{{ grafana_service_version }}
+    user: root
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - /etc/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - 443:{{ grafana_service_port }}
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    env_file:
+      - ./grafana.env
+  
+  mysql:
+    container_name: mysql
+    image: mysql:8.4.5
+    restart: always
+    command: --mysql-native-password=ON
+    env_file:
+      - ./mysql.env
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - {{ grafana_mysql_port }}:3306
+
+  grafana-relay:
+    container_name: grafana-relay
+    image: robertyoung/home-assistant-grafana-relay:v1.3.0
+    restart: always
+    environment:
+      - TZ=Europe/London
+    ports:
+      - "{{ grafana_relay_port }}:80"
+    env_file:
+      - ./grafana-relay.env
+
+  backup-toolkit:
+    container_name: backup-toolkit
+    image: backup-toolkit:local
+    command: sleep infinity 
+    restart: unless-stopped
+    volumes:
+      - mysql-data:{{ grafana_backup_from }}
+    env_file:
+      - ./backup-toolkit.env
+
+volumes:
+  grafana-data:
+  mysql-data:
