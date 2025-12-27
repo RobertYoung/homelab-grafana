@@ -1,0 +1,12 @@
+---
+offline: true  # Don't install dependencies (requires SSH keys for private repos)
+
+skip_list:
+  - role-name  # Allow hyphens in role names (grafana)
+
+exclude_paths:
+  - .roles/
+  - .ansible/
+  - .git/
+  - .github/
+  - playbooks/  # Exclude playbooks referencing external roles (not available in CI)
