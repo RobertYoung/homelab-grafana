@@ -17,6 +17,15 @@
     owner: "{{ grafana_user }}"
     group: "{{ grafana_user }}"
 
+- name: Create certs directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ grafana_config_dir }}/certs"
+    state: directory
+    mode: "0755"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_user }}"
+
 - name: Create data directory
   become: true
   ansible.builtin.file:

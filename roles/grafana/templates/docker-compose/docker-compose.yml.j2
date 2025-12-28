@@ -6,7 +6,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
       - /etc/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/grafana/certs:/etc/grafana/certs:ro
     ports:
       - 443:{{ grafana_service_port }}
     restart: unless-stopped
