@@ -16,7 +16,6 @@ grafana_validator_admin_password: password
 # Backup configuration
 grafana_backup_image_name: backup-toolkit
 grafana_backup_image_tag: local
-grafana_backup_from: /data
 grafana_backup_mosquitto_host: mosquitto.local.iamrobertyoung.co.uk
 grafana_backup_mosquitto_username: "home-assistant"
 grafana_backup_mosquitto_password: "password"
