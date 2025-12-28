@@ -42,9 +42,10 @@
       vars:
         step_ca_client_provisioner_password: "{{ lookup('aws_ssm', '/home-server/step-ca-ansible-password', region='eu-west-2') }}"
         step_ca_client_post_renew_commands:
+          - "mkdir -p /etc/grafana/certs"
           - "cp /etc/ssl/certs/grafana.local.iamrobertyoung.co.uk.crt /etc/grafana/certs/"
           - "cp /etc/ssl/private/grafana.local.iamrobertyoung.co.uk.pem /etc/grafana/certs/"
-          - "docker kill -s HUP nginx"
+          - "docker restart grafana"
         step_ca_client_cert_not_after: "168h" # 7 days
 
     - role: syslog
