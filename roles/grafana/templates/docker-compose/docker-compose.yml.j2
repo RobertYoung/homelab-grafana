@@ -41,10 +41,11 @@ services:
   backup-toolkit:
     container_name: backup-toolkit
     image: backup-toolkit:local
-    command: sleep infinity 
+    command: sleep infinity
     restart: unless-stopped
     volumes:
-      - mysql-data:{{ grafana_backup_from }}
+      - /etc/grafana/grafana.ini:/backup/config/grafana.ini:ro
+      - grafana-data:/backup/grafana-data:ro
     env_file:
       - ./backup-toolkit.env
 
