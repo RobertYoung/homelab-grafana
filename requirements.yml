@@ -11,7 +11,7 @@ roles:
 
   - src: git@github.com:RobertYoung/homelab-ansible-role-shell.git
     scm: git
-    version: v1.3.0
+    version: v1.4.0
     name: shell
 
   - src: git@github.com:RobertYoung/homelab-ansible-role-docker.git
@@ -26,7 +26,7 @@ roles:
 
   - src: git@github.com:RobertYoung/homelab-ansible-role-step-ca-client.git
     scm: git
-    version: v2.0.0
+    version: v3.0.0
     name: step-ca-client
 
   - src: git@github.com:RobertYoung/homelab-ansible-role-syslog.git

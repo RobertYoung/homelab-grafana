@@ -45,7 +45,7 @@
           - "mkdir -p /etc/grafana/certs"
           - "cp /etc/ssl/certs/grafana.local.iamrobertyoung.co.uk.crt /etc/grafana/certs/"
           - "cp /etc/ssl/private/grafana.local.iamrobertyoung.co.uk.pem /etc/grafana/certs/"
-          - "docker restart grafana"
+          - "docker restart grafana || echo 'Grafana container not running, skipping restart'"
         step_ca_client_cert_not_after: "168h" # 7 days
 
     - role: syslog
